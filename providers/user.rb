@@ -35,9 +35,11 @@ end
 
 action :set_tags do
   execute "rabbitmqctl set_user_tags #{new_resource.user} #{new_resource.tags.join(" ")}" do
-    only_if "rabbitmqctl list_users | grep '^#{new_resource.user}\s'"
+    only_if do
+      `rabbitmqctl list_users` =~ /^#{new_resource.user}\s/
+    end
     Chef::Log.info "Settings RabbitMQ user tags for '#{new_resource.user}'."
-    new_resource.update_by_last_action(true)
+    new_resource.updated_by_last_action(true)
   end
 end
 

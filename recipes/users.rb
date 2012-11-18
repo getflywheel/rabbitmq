@@ -1,6 +1,6 @@
-rabbitmq_user "guest" do
-	action :delete
-end
+# rabbitmq_user "guest" do
+# 	action :delete
+# end
 
 
 
@@ -22,10 +22,10 @@ node[:rabbitmq][:users].each do |user|
 
 
 	if user[:vhosts]
-		user[:vhosts].each do |mq_vhost, mq_permissions|
+		user[:vhosts].each_key do |mq_vhost|
 			rabbitmq_user user[:name] do
 				vhost mq_vhost
-				permissions mq_permissions
+				permissions user[:vhosts][mq_vhost]
 				action :set_permissions
 			end
 		end

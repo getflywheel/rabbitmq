@@ -33,6 +33,14 @@ action :delete do
   end
 end
 
+action :set_tags do
+  execute "rabbitmqctl set_user_tags #{new_resource.user} #{new_resource.tags.join(" ")}" do
+    only_if "rabbitmqctl list_users | grep '^#{new_resource.user}\s'"
+    Chef::Log.info "Settings RabbitMQ user tags for '#{new_resource.user}'."
+    new_resource.update_by_last_action(true)
+  end
+end
+
 action :set_permissions do
   if new_resource.vhost
     execute "rabbitmqctl set_permissions -p #{new_resource.vhost} #{new_resource.user} #{new_resource.permissions}" do
